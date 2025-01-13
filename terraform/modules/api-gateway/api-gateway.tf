@@ -90,8 +90,8 @@ resource "aws_apigatewayv2_authorizer" "api_authorizer" {
 
 # ####################################### MSC-MGMT-MEDIA #######################################################
 
-# Search for the Load Balancer created by the K8s service for api-food microservice
-data "aws_lb" "eks_api_food" {
+# Search for the Load Balancer created by the K8s service for MSC-MGMT-MEDIA microservice
+data "aws_lb" "eks_msc_mgmt_media" {
   tags = {
     "kubernetes.io/service-name"                = "default/${var.lb_service_name_msc_mgmt_media}"
     "kubernetes.io/cluster/${var.project_name}" = "owned"
@@ -99,16 +99,16 @@ data "aws_lb" "eks_api_food" {
 }
 
 # Get the Listener of the Load Balancer created by this Load Balancer
-data "aws_lb_listener" "eks_api_food" {
-  load_balancer_arn = data.aws_lb.eks_api_food.arn
+data "aws_lb_listener" "eks_msc_mgmt_media" {
+  load_balancer_arn = data.aws_lb.eks_msc_mgmt_media.arn
   port              = var.lb_service_port_msc_mgmt_media
 }
 
 # Create the API Gateway HTTP_PROXY integration
-resource "aws_apigatewayv2_integration" "api_integration_api_food" {
+resource "aws_apigatewayv2_integration" "api_integration_msc_mgmt_media" {
   api_id                 = aws_apigatewayv2_api.api.id
   integration_type       = "HTTP_PROXY"
-  integration_uri        = data.aws_lb_listener.eks_api_food.arn
+  integration_uri        = data.aws_lb_listener.eks_msc_mgmt_media.arn
   integration_method     = "ANY"
   connection_type        = "VPC_LINK"
   connection_id          = aws_apigatewayv2_vpc_link.api_vpc_link.id
@@ -120,19 +120,19 @@ resource "aws_apigatewayv2_integration" "api_integration_api_food" {
 }
 
 # API Gateway route with ANY method for the main service (/{proxy+})
-resource "aws_apigatewayv2_route" "api_gateway_route_api_food" {
+resource "aws_apigatewayv2_route" "api_gateway_route_msc_mgmt_media" {
   api_id             = aws_apigatewayv2_api.api.id
   route_key          = "ANY /mgmt-media/{proxy+}"
-  target             = "integrations/${aws_apigatewayv2_integration.api_integration_api_food.id}"
+  target             = "integrations/${aws_apigatewayv2_integration.api_integration_msc_mgmt_media.id}"
   authorization_type = "CUSTOM"
   authorizer_id      = aws_apigatewayv2_authorizer.api_authorizer.id
-  depends_on         = [aws_apigatewayv2_integration.api_integration_api_food]
+  depends_on         = [aws_apigatewayv2_integration.api_integration_msc_mgmt_media]
 }
 
 # ####################################### MSC-PCS-MIDIA #######################################################
 
 # Search for the Load Balancer created by the K8s service for api-order microservice
-data "aws_lb" "eks_api_order" {
+data "aws_lb" "eks_msc_pcs_midia" {
   tags = {
     "kubernetes.io/service-name"                = "default/${var.lb_service_name_msc_pcs_midia}"
     "kubernetes.io/cluster/${var.project_name}" = "owned"
@@ -140,16 +140,16 @@ data "aws_lb" "eks_api_order" {
 }
 
 # Get the Listener of the Load Balancer created by this Load Balancer
-data "aws_lb_listener" "eks_api_order" {
-  load_balancer_arn = data.aws_lb.eks_api_order.arn
+data "aws_lb_listener" "eks_msc_pcs_midia" {
+  load_balancer_arn = data.aws_lb.eks_msc_pcs_midia.arn
   port              = var.lb_service_port_msc_pcs_midia
 }
 
 # Create the API Gateway HTTP_PROXY integration
-resource "aws_apigatewayv2_integration" "api_integration_api_order" {
+resource "aws_apigatewayv2_integration" "api_integration_msc_pcs_midia" {
   api_id                 = aws_apigatewayv2_api.api.id
   integration_type       = "HTTP_PROXY"
-  integration_uri        = data.aws_lb_listener.eks_api_order.arn
+  integration_uri        = data.aws_lb_listener.eks_msc_pcs_midia.arn
   integration_method     = "ANY"
   connection_type        = "VPC_LINK"
   connection_id          = aws_apigatewayv2_vpc_link.api_vpc_link.id
@@ -161,11 +161,11 @@ resource "aws_apigatewayv2_integration" "api_integration_api_order" {
 }
 
 # API Gateway route with ANY method for the main service (/{proxy+})
-resource "aws_apigatewayv2_route" "api_gateway_route_api_order" {
+resource "aws_apigatewayv2_route" "api_gateway_route_msc_pcs_midia" {
   api_id             = aws_apigatewayv2_api.api.id
   route_key          = "ANY /pcs-midia/{proxy+}"
-  target             = "integrations/${aws_apigatewayv2_integration.api_integration_api_order.id}"
+  target             = "integrations/${aws_apigatewayv2_integration.api_integration_msc_pcs_midia.id}"
   authorization_type = "CUSTOM"
   authorizer_id      = aws_apigatewayv2_authorizer.api_authorizer.id
-  depends_on         = [aws_apigatewayv2_integration.api_integration_api_order]
+  depends_on         = [aws_apigatewayv2_integration.api_integration_msc_pcs_midia]
 }
