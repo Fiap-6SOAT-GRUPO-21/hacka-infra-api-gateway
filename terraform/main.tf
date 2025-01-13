@@ -15,7 +15,7 @@ module "api_gateway" {
   lb_service_name_msc_pcs_midia  = "msc-pcs-midia-service"
   lb_service_port_msc_pcs_midia  = 89
   vpc_id                         = data.aws_ssm_parameter.vpc_id.value
-  private_subnet_ids = split(",", data.aws_ssm_parameter.private_subnet_ids.value)
+  private_subnet_ids             = split(",", data.aws_ssm_parameter.private_subnet_ids.value)
 }
 
 resource "aws_ssm_parameter" "api_gateway_endpoint" {
